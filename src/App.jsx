@@ -1,35 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import { Card } from "antd";
+import axios from "axios";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [pokemons, setPokemons] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("https://pokeapi.co/api/v2/pokemon?limit=12")
+      .then((res) => setPokemons(res.data.results))
+      .catch((err) => console.error(err));
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div style={{ padding: "20px" }}>
+      <h1 style={{ textAlign: "center" }}>Pokemon list</h1>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+          gap: "20px",
+          marginTop: "20px",
+        }}
+      >
+        {pokemons.map((pokemon, index) => (
+          <Card
+            key={index}
+            hoverable
+            style={{
+              backgroundColor: "#e3f2fd",
+              borderRadius: "12px",
+              textAlign: "center",
+            }}
+            cover={
+              <img
+                alt={pokemon.name}
+                src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${
+                  index + 1
+                }.png`}
+                style={{ width: "150px", margin: "20px auto" }}
+              />
+            }
+          >
+            <h3 style={{ textTransform: "capitalize", color: "#0d47a1" }}>
+              {pokemon.name}
+            </h3>
+          </Card>
+        ))}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
